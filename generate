@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+File.delete(*Dir['data/*.in'])
+
+TASK_COUNTS = Array.new(10) { |i| 2**(i+1) }
+VALUE_RANGE = 0..1000;
+
+TASK_COUNTS.each_with_index do |graph_size, index|
+  File.open(File.join('data', "data#{"%03d" % index}.in"), 'w') do |f|
+    f.puts(graph_size)
+    f.puts Array.new(graph_size) {
+      Array.new(graph_size) {
+        Random.rand(0...graph_size)
+      }.join(" ")
+    }.join("\n")
+  end
+end
