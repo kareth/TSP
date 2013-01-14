@@ -8,8 +8,10 @@ Given full graph of N verticles with edges of different lengths, find shortest c
 Ready:
 + Greedy Algorithm ( Nearest Neighbour )
 
-ToDo:
+In Progress:
 + Ant Colony Optimization
++ Farthest Insertion
+
+To Do:
 + Genetic Algorithm
 + Simulated Annealing
-+ Farthest Insertion
