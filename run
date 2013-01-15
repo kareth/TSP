@@ -15,7 +15,7 @@ FileUtils.mkdir_p('tmp')
 source = File.join('src', TASK, 'main.cpp')
 binary = File.join('tmp', TASK)
 
-if(system("g++ -o #{binary} #{source}"))
+if(system("g++ -O2 -o #{binary} #{source}"))
   Dir['data/*.in'].sort.each do |input|
     output = ""
     result = Benchmark.measure { output = `#{binary} < #{input}` }

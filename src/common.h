@@ -52,7 +52,7 @@ void readData(Graph &G){
 
 void printResult(int result, vector<int> &path){
   printf("%d\n",result);
-  REP(i, path.size()) printf("%d ",path[i]);
-  printf("\n");
+  //REP(i, path.size()) printf("%d ",path[i]);
+  //printf("\n");
 }
 
