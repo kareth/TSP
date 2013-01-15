@@ -1,2 +1,3 @@
 *.o
 data/*.in
+tmp
