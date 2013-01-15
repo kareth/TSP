@@ -1,12 +1,12 @@
 #include "../common.h"
 
-const double BETA = 1;
-const double ALPHA = 0.5;
-const double BASIC_PHEROMONE = 0.001;
-const double Q = 0.5;
+const double BETA = 2;
+const double ALPHA = 0.1;
+const double BASIC_PHEROMONE = 0.00027173913043; //(1/(LEN*n))
+const double Q = 0.9;
 
-const int STEPS = 50;
-const int ANTS = 50;
+const int STEPS = 100;
+const int ANTS = 10;
 
 double rand01(){
   return double(rand()) / double(RAND_MAX);
@@ -43,14 +43,15 @@ AOGraph G;
 
 class Ant{
   int distanceTravelled;
+  vector<int> path;
   vector<int> visited;
 
   private:
     bool isVisited(int v){
-      return find(visited.begin(), visited.end(), v) != visited.end();
+      return visited[v];
     }
 
-    int lastCity(){return visited.back();}
+    int lastCity(){return path.back();}
 
     int moveToBest(){
       int best = lastCity();
@@ -92,9 +93,15 @@ class Ant{
       return sum;
     }
 
+    void addToPath(int v){
+      path.push_back(v);
+      visited[v] = 1;
+    }
+
   public:
     Ant(){
-      visited.push_back(rand()%G.size);
+      visited.resize(G.size);
+      addToPath(rand()%G.size);
     }
 
     void move(){
@@ -104,15 +111,15 @@ class Ant{
 
       G.updateLocalTrial(lastCity(), next);
       distanceTravelled += G.distance[lastCity()][next];
-      visited.push_back(next);
+      addToPath(next);
     }
 
     int getPath(){ return distanceTravelled;}
-    int getPath(vector<int> &v){ v = visited; return distanceTravelled;}
+    int getPath(vector<int> &v){ v = path; return distanceTravelled;}
 
     void printPath(){
       printf("Path: ");
-      REP(i, visited.size()) printf("%d ",visited[i]);
+      REP(i, path.size()) printf("%d ",path[i]);
       printf("\n");
     }
 };
@@ -122,25 +129,25 @@ int solve(AOGraph &G, vector<int> &path){
   int bestPathLength = 1000000000;
 
   REP(i, STEPS){
-    vector<Ant> ants;
+    vector<Ant*> ants;
     REP(j, ANTS){
-      Ant newAnt;
+      Ant* newAnt = new Ant;
       ants.push_back(newAnt);
     }
 
     REP(j, G.size-1)
       REP(k, ANTS)
-        ants[k].move();
+        ants[k]->move();
 
     int shortestAnt = 0;
     int shortestPathLength;
     vector<int> shortestPath;
 
     REP(j, ANTS)
-      if( ants[shortestAnt].getPath() < ants[j].getPath())
+      if( ants[shortestAnt]->getPath() > ants[j]->getPath())
         shortestAnt = j;
 
-    shortestPathLength = ants[shortestAnt].getPath(shortestPath);
+    shortestPathLength = ants[shortestAnt]->getPath(shortestPath);
     G.updateGlobally(shortestPath, shortestPathLength);
 
     if( bestPathLength > shortestPathLength){
