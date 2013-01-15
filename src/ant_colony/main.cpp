@@ -1,12 +1,12 @@
 #include "../common.h"
 
-const double BETA = 2;
-const double ALPHA = 0.1;
-const double BASIC_PHEROMONE = 0.00027173913043; //(1/(LEN*n))
-const double Q = 0.9;
+const double BETA = 3;
+const double ALPHA = 1;
+const double BASIC_PHEROMONE = 0.5;
+const double Q = 1;
 
 const int STEPS = 100;
-const int ANTS = 10;
+const int ANTS = 15;
 
 double rand01(){
   return double(rand()) / double(RAND_MAX);
@@ -99,6 +99,13 @@ class Ant{
     }
 
   public:
+    void reinitialize(){
+      path.clear();
+      distanceTravelled = 0;
+      REP(i, visited.size()) visited[i] = 0;
+      addToPath(rand()%G.size);
+    }
+
     Ant(){
       visited.resize(G.size);
       addToPath(rand()%G.size);
@@ -114,8 +121,8 @@ class Ant{
       addToPath(next);
     }
 
-    int getPath(){ return distanceTravelled;}
-    int getPath(vector<int> &v){ v = path; return distanceTravelled;}
+    int getPath(){ return distanceTravelled + G.distance[path.back()][path[0]];}
+    int getPath(vector<int> &v){ v = path; return distanceTravelled + G.distance[path.back()][path[0]];}
 
     void printPath(){
       printf("Path: ");
@@ -126,14 +133,22 @@ class Ant{
 
 int solve(AOGraph &G, vector<int> &path){
   vector<int> bestPath;
-  int bestPathLength = 1000000000;
+  int bestPathLength = 1000000;
+
+  vector<Ant*> ants;
+
+  REP(j, ANTS){
+    Ant* newAnt = new Ant;
+    ants.push_back(newAnt);
+  }
 
   REP(i, STEPS){
-    vector<Ant*> ants;
+
     REP(j, ANTS){
-      Ant* newAnt = new Ant;
-      ants.push_back(newAnt);
+      ants[j]->reinitialize();
     }
+
+
 
     REP(j, G.size-1)
       REP(k, ANTS)
