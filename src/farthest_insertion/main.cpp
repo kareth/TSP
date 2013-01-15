@@ -1,5 +1,15 @@
 #include "../common.h"
 
+vector<int> global;
+
+bool f_compare(int i, int j) {
+  return (global[i] < global[j]);
+}
+
+void farthest_sort(vector<int> &v) {
+  sort(v.begin(), v.end(), f_compare);
+}
+
 class CNGraph : public Graph{
   public:
     vector<int> visited;
@@ -18,11 +28,12 @@ class CNGraph : public Graph{
 
     void prepareFarthestData() {
       for(int i = 0; i < size; i++) {
-        farthestPointer[i] = size;
+        farthestPointer[i] = size-1;
         for(int l = 0; l < size; l++) {
           farthest[i].push_back(l);
         }
-        sort(farthest[i].begin(), farthest[i].end());
+        global = distance[i];
+        farthest_sort(farthest[i]);
       }
     }
 
@@ -44,8 +55,9 @@ class CNGraph : public Graph{
       return result;
     }
 
-    int closestVerticleArc(list<int> &path, int verticle) {
-      int result = -1, min = INF, arc1, arc2, arclen;
+    list<int>::iterator closestVerticleArc(list<int> &path, int verticle) {
+      list<int>::iterator result = path.begin();
+      int min = INF, arc1, arc2, arclen;
       for(list<int>::iterator i = path.begin(); i != path.end(); ++i) {
         arc1 = *i;
         list<int>::iterator next = i;
@@ -56,7 +68,7 @@ class CNGraph : public Graph{
           arc2 = *next;
         arclen = distance[arc1][verticle] + distance[verticle][arc2] - distance[arc1][arc2];
         if(arclen < min) {
-          result = *i;
+          result = i;
           min = arclen;
         }
       }
@@ -73,8 +85,11 @@ int solve(CNGraph &G, vector<int> &path){
   for(int z = 1; z < G.size; z++) {
     int newVerticle = G.farthestFreeVerticle();
     G.visit(newVerticle);
-    int closest = G.closestVerticleArc(pathList, newVerticle);
-    path.insert(path.begin() + closest, newVerticle);
+    list<int>::iterator it = G.closestVerticleArc(pathList, newVerticle);
+    pathList.insert(++it, newVerticle);
+  }
+  for(list<int>::iterator i = pathList.begin(); i != pathList.end(); ++i) {
+    path.push_back(*i);
   }
 
   int sum = 0;
