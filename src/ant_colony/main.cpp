@@ -2,7 +2,7 @@
 
 const double BETA = 1;
 const double ALPHA = 0.5;
-const double BASIC_PHEROMONE = 0.0001;
+const double BASIC_PHEROMONE = 0.001;
 const double Q = 0.5;
 
 const int STEPS = 50;
@@ -42,9 +42,8 @@ AOGraph G;
 
 
 class Ant{
-  vector<int> visited;
   int distanceTravelled;
-
+  vector<int> visited;
 
   private:
     bool isVisited(int v){
@@ -78,7 +77,7 @@ class Ant{
       for(i = 0; i < scores.size() && r > 0; i++){
         r -= G.score(lastCity(), scores[i]);
       }
-      return i;
+      return scores[i];
     }
 
     int getScores(vector<double> &scores){
@@ -86,7 +85,7 @@ class Ant{
       REP(i, G.size){
         if(!isVisited(i)){
           int score = G.score(lastCity(), i);
-          scores.push_back(score);
+          scores.push_back(i);
           sum += score;
         }
       }
@@ -104,15 +103,24 @@ class Ant{
       else next = moveRandomly();
 
       G.updateLocalTrial(lastCity(), next);
+      distanceTravelled += G.distance[lastCity()][next];
+      visited.push_back(next);
     }
 
     int getPath(){ return distanceTravelled;}
     int getPath(vector<int> &v){ v = visited; return distanceTravelled;}
+
+    void printPath(){
+      printf("Path: ");
+      REP(i, visited.size()) printf("%d ",visited[i]);
+      printf("\n");
+    }
 };
 
 int solve(AOGraph &G, vector<int> &path){
   vector<int> bestPath;
   int bestPathLength = 1000000000;
+
   REP(i, STEPS){
     vector<Ant> ants;
     REP(j, ANTS){
@@ -134,7 +142,14 @@ int solve(AOGraph &G, vector<int> &path){
 
     shortestPathLength = ants[shortestAnt].getPath(shortestPath);
     G.updateGlobally(shortestPath, shortestPathLength);
+
+    if( bestPathLength > shortestPathLength){
+      bestPath = shortestPath;
+      bestPathLength = shortestPathLength;
+    }
   }
+  path = bestPath;
+  return bestPathLength;
 }
 
 int main(){
