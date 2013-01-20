@@ -51,7 +51,9 @@ class Ant{
       return visited[v];
     }
 
+
     int lastCity(){return path.back();}
+
 
     int moveToBest(){
       int best = lastCity();
@@ -65,12 +67,14 @@ class Ant{
       return best;
     }
 
+
     int moveRandomly(){
       vector<double> scores;
       double sum = 0;
       sum = getScores(scores);
       return getRandom(scores, sum);
     }
+
 
     int getRandom(vector<double> scores, double sum){
       double r = rand01()*sum;
@@ -80,6 +84,7 @@ class Ant{
       }
       return scores[i];
     }
+
 
     int getScores(vector<double> &scores){
       int sum = 0.0;
@@ -93,23 +98,27 @@ class Ant{
       return sum;
     }
 
+
     void addToPath(int v){
       path.push_back(v);
       visited[v] = 1;
     }
 
+
   public:
-    void reinitialize(){
+    void reset(){
       path.clear();
       distanceTravelled = 0;
       REP(i, visited.size()) visited[i] = 0;
       addToPath(rand()%G.size);
     }
 
+
     Ant(){
       visited.resize(G.size);
       addToPath(rand()%G.size);
     }
+
 
     void move(){
       int next;
@@ -121,8 +130,10 @@ class Ant{
       addToPath(next);
     }
 
+
     int getPath(){ return distanceTravelled + G.distance[path.back()][path[0]];}
     int getPath(vector<int> &v){ v = path; return distanceTravelled + G.distance[path.back()][path[0]];}
+
 
     void printPath(){
       printf("Path: ");
@@ -131,10 +142,29 @@ class Ant{
     }
 };
 
-int solve(AOGraph &G, vector<int> &path){
-  vector<int> bestPath;
-  int bestPathLength = 1000000;
 
+
+void runStep(vector<Ant*> &ants, int &sPathLen, vector<int> &sPath){
+  REP(j, ANTS)
+    ants[j]->reset();
+
+  REP(j, G.size-1)
+    REP(k, ANTS)
+      ants[k]->move();
+
+  int bAnt = 0;
+
+  REP(j, ANTS)
+    if( ants[bAnt]->getPath() > ants[j]->getPath())
+      bAnt = j;
+
+  sPathLen = ants[bAnt]->getPath(sPath);
+  G.updateGlobally(sPath, sPathLen);
+}
+
+
+
+int solve(AOGraph &G, vector<int> &bPath){
   vector<Ant*> ants;
 
   REP(j, ANTS){
@@ -142,37 +172,20 @@ int solve(AOGraph &G, vector<int> &path){
     ants.push_back(newAnt);
   }
 
+  vector<int> sPath;
+  int bPathLen = 1000000, sPathLen;
+
   REP(i, STEPS){
-
-    REP(j, ANTS){
-      ants[j]->reinitialize();
-    }
-
-
-
-    REP(j, G.size-1)
-      REP(k, ANTS)
-        ants[k]->move();
-
-    int shortestAnt = 0;
-    int shortestPathLength;
-    vector<int> shortestPath;
-
-    REP(j, ANTS)
-      if( ants[shortestAnt]->getPath() > ants[j]->getPath())
-        shortestAnt = j;
-
-    shortestPathLength = ants[shortestAnt]->getPath(shortestPath);
-    G.updateGlobally(shortestPath, shortestPathLength);
-
-    if( bestPathLength > shortestPathLength){
-      bestPath = shortestPath;
-      bestPathLength = shortestPathLength;
+    runStep(ants, sPathLen, sPath);
+    if(sPathLen < bPathLen){
+      bPathLen = sPathLen;
+      bPath = sPath;
     }
   }
-  path = bestPath;
-  return bestPathLength;
+  return bPathLen;
 }
+
+
 
 int main(){
   srand(time(0));
