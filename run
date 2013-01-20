@@ -19,8 +19,8 @@ if(system("g++ -O2 -o #{binary} #{source}"))
   Dir['data/*.in'].sort.each do |input|
     output = ""
     result = Benchmark.measure { output = `#{binary} < #{input}` }
-    puts(output)
     $stderr.puts("#{input}: #{result}")
+    puts(output)
   end
 end
 
