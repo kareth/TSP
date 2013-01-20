@@ -1,12 +1,12 @@
 #include "../common.h"
 
-const double BETA = 3;
-const double ALPHA = 1;
-const double BASIC_PHEROMONE = 0.5;
-const double Q = 1;
+const double BETA = 1;
+const double ALPHA = 0.5;
+const double BASIC_PHEROMONE = 0.001;
+const double Q = 0.97;
 
-const int STEPS = 100;
-const int ANTS = 15;
+const int STEPS = 200;
+const int ANTS = 8;
 
 double rand01(){
   return double(rand()) / double(RAND_MAX);
@@ -28,12 +28,14 @@ class AOGraph : public Graph{
 
     void updateLocalTrial(int x, int y){
       pheromone[x][y] = (1.0 - ALPHA)* pheromone[x][y] + ALPHA * BASIC_PHEROMONE;
+      pheromone[y][x] = pheromone[x][y];
     }
 
     void updateGlobally(vector<int> &path, int length){
       REP(i, path.size()-1){
         int x = path[i], y = path[i+1];
         pheromone[x][y] = (1.0 - ALPHA) * pheromone[x][y] + ALPHA / double(length);
+        pheromone[y][x] = pheromone[x][y];
       }
     }
 };
@@ -177,9 +179,10 @@ int solve(AOGraph &G, vector<int> &bPath){
 
   REP(i, STEPS){
     runStep(ants, sPathLen, sPath);
+
     if(sPathLen < bPathLen){
       bPathLen = sPathLen;
-      bPath = sPath;
+      //bPath = sPath;
     }
   }
   return bPathLen;
@@ -191,10 +194,15 @@ int main(){
   srand(time(0));
   readData(G);
 
-  vector<int> path;
-  int result = solve(G, path);
 
-  printResult(result, path);
-
+  int res = 1000000000;
+  REP(i, 1){
+    vector<int> path;
+    int result = solve(G, path);
+    res = min(res, result);
+    //printResult(result, path);
+    //printf("%d\n",res);
+  }
+  printf("%d\n",res);
   return 0;
 }
