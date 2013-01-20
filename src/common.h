@@ -6,6 +6,7 @@
 #include<cmath>
 #include<cstring>
 #include<ctime>
+#include<cstdlib>
 
 #define INF 2000000000
 #define REP(i,n) for(int i = 0; i < (n); i++)
@@ -54,7 +55,7 @@ void readData(Graph &G){
 
 void printResult(int result, vector<int> &path){
   printf("%d\n",result);
-  //REP(i, path.size()) printf("%d ",path[i]);
-  //printf("\n");
+  REP(i, path.size()) printf("%d ",path[i]);
+  printf("\n");
 }
 

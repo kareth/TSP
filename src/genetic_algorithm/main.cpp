@@ -1,8 +1,7 @@
 #include "../common.h"
 
 #define POPULATION_SIZE 1000
-#define TOP_POOL        500
-#define EVOLUTION_TIMES 1000
+#define EVOLUTION_TIMES 500
 
 class Genome {
   public:
@@ -26,31 +25,23 @@ class Genome {
 
     Genome breed(Genome &genome) {
       vector<int> result;
+      result.resize(genes.size());
       set<int> used;
-      for(int i = 0; i < genes.size(); i++) {
-        if(genes[i] == genome.genes[i]) {
-          result.push_back(genes[i]);
-        }
-        else {
-          int insert;
+      int co = rand() % genes.size();
+      REP(i, co) result[i] = genes[i];
+      REP(i, co) used.insert(result[i]);
+      for(int i = co; i < genes.size(); i++) {
+          int insert = 0;
           if(used.find(genes[i]) == used.end()) insert = genes[i];
-          else insert = genome.genes[i];
+          else if(used.find(genome.genes[i]) == used.end()) insert = genome.genes[i];
+          else {
+            while(used.find(insert) != used.end()) insert++;
+          }
           used.insert(insert);
-          result.push_back(insert);
-        }
+          result[i] = insert;
       }
       Genome new_genome(result, G);
       return new_genome.mutate();
-      /*
-      if(score < genome.score) {
-        Genome new_genome(genes, G);
-        return new_genome.mutate();
-      }
-      else {
-        Genome new_genome(genome.genes, G);
-        return new_genome.mutate();
-      }
-      */
     }
 
   private:
@@ -76,16 +67,14 @@ int solve(Graph &G, vector<int> &path){
   sort(population.begin(), population.end(), genome_compare);
 
   for(int i = 0; i < EVOLUTION_TIMES; i++) {
-    for(int l = 0; l < TOP_POOL; l++) {
-      int r1 = rand() % TOP_POOL;
-      int r2 = rand() % TOP_POOL;
+    for(int l = 0; l < POPULATION_SIZE; l++) {
+      int r1 = rand() % POPULATION_SIZE;
+      int r2 = rand() % POPULATION_SIZE;
       population.push_back(population[r1].breed(population[r2]));
-    }
-    for(int l = TOP_POOL; l < POPULATION_SIZE; l++) {
-      random_shuffle(population[l].genes.begin(), population[l].genes.end());
     }
     sort(population.begin(), population.end(), genome_compare);
     population.erase(population.begin() + POPULATION_SIZE, population.end());
+    //printf("evolution %i: top: %d last: %d\n", i, population[0].score, population[POPULATION_SIZE-1].score);
   }
 
   path.clear();
