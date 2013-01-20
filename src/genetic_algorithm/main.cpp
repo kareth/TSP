@@ -1,8 +1,8 @@
 #include "../common.h"
 
-#define POPULATION_SIZE 100
-#define TOP_POOL        50
-#define EVOLUTION_TIMES 100000
+#define POPULATION_SIZE 1000
+#define TOP_POOL        500
+#define EVOLUTION_TIMES 1000
 
 class Genome {
   public:
@@ -10,8 +10,8 @@ class Genome {
     vector<int> genes;
     int score;
 
-    Genome(vector<int> &path, Graph &G) {
-      this->genes = vector<int>(path);
+    Genome(vector<int> path, Graph &G) {
+      this->genes = path;
       this->G = G;
       this->score = path_length();
     }
@@ -61,7 +61,7 @@ class Genome {
     }
 };
 
-bool genome_compare(Genome g1, Genome g2) {
+bool genome_compare(const Genome &g1, const Genome &g2) {
   return (g1.score < g2.score);
 }
 
@@ -80,6 +80,9 @@ int solve(Graph &G, vector<int> &path){
       int r1 = rand() % TOP_POOL;
       int r2 = rand() % TOP_POOL;
       population.push_back(population[r1].breed(population[r2]));
+    }
+    for(int l = TOP_POOL; l < POPULATION_SIZE; l++) {
+      random_shuffle(population[l].genes.begin(), population[l].genes.end());
     }
     sort(population.begin(), population.end(), genome_compare);
     population.erase(population.begin() + POPULATION_SIZE, population.end());
