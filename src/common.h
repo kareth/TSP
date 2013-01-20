@@ -1,8 +1,10 @@
 #include<algorithm>
 #include<cstdio>
 #include<vector>
+#include<list>
 #include<cmath>
 #include<cstring>
+#include<ctime>
 
 #define INF 2000000000
 #define REP(i,n) for(int i = 0; i < (n); i++)
@@ -38,13 +40,13 @@ class Graph{
 };
 
 void readData(Graph &G){
-  int size, dist;
-  scanf("%d",&size);
+  int size, dist, dump;
+  dump=scanf("%d",&size);
   G.init(size);
 
   REP(i, G.size)
     REP(j, G.size){
-      scanf("%d",&dist);
+      dump=scanf("%d",&dist);
       G.addEdge(i, j, dist);
     }
 }
