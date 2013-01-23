@@ -3,7 +3,7 @@
 const double BETA = 2;
 const double ALPHA = 0.5;
 const double BASIC_PHEROMONE = 0.00000263157895;
-const double Q = 0.95;
+const double Q = 0.97;
 
 const int STEPS = 3500;
 const int ANTS = 15;
@@ -182,7 +182,7 @@ int solve(AOGraph &G, vector<int> &bPath){
 
     if(sPathLen < bPathLen){
       bPathLen = sPathLen;
-      fprintf(stderr, "%d \t %d\n", i, bPathLen);
+      //fprintf(stderr, "%d \t %d\n", i, bPathLen);
       //bPath = sPath; // improves speed, not necessary for current calculations
     }
   }

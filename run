@@ -16,7 +16,7 @@ source = File.join('src', TASK, 'main.cpp')
 binary = File.join('tmp', TASK)
 
 if(system("g++ -O2 -o #{binary} #{source}"))
-  Dir['input/pcb1173.in'].sort_by { |i| i.match(/(\d+)\.in/)[1].to_i }.each do |input|
+  Dir['input/*.in'].sort_by { |i| i.match(/(\d+)\.in/)[1].to_i }.each do |input|
     output = ""
     result = Benchmark.measure { output = `#{binary} < #{input}` }
     $stderr.puts("#{input}: #{result}")
