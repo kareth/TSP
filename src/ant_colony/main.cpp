@@ -1,12 +1,12 @@
 #include "../common.h"
 
-const double BETA = 1;
+const double BETA = 2;
 const double ALPHA = 0.5;
-const double BASIC_PHEROMONE = 0.00001;
-const double Q = 0.98;
+const double BASIC_PHEROMONE = 0.00000263157895;
+const double Q = 0.95;
 
 const int STEPS = 3500;
-const int ANTS = 70;
+const int ANTS = 15;
 
 double rand01(){
   return double(rand()) / double(RAND_MAX);
