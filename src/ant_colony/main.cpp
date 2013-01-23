@@ -2,11 +2,11 @@
 
 const double BETA = 1;
 const double ALPHA = 0.5;
-const double BASIC_PHEROMONE = 0.001;
-const double Q = 0.97;
+const double BASIC_PHEROMONE = 0.00001;
+const double Q = 0.98;
 
-const int STEPS = 200;
-const int ANTS = 8;
+const int STEPS = 3500;
+const int ANTS = 70;
 
 double rand01(){
   return double(rand()) / double(RAND_MAX);
@@ -182,7 +182,8 @@ int solve(AOGraph &G, vector<int> &bPath){
 
     if(sPathLen < bPathLen){
       bPathLen = sPathLen;
-      //bPath = sPath;
+      fprintf(stderr, "%d \t %d\n", i, bPathLen);
+      //bPath = sPath; // improves speed, not necessary for current calculations
     }
   }
   return bPathLen;

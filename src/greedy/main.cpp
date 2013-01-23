@@ -25,10 +25,9 @@ class CNGraph : public Graph{
 };
 
 
-// TODO Refactor
-// This whole function smells and should be partially incorporated into CNGraph.
 int solve(CNGraph &G, vector<int> &path){
-  int startingVerticle = 0; // We can think of any way of improving that, becouse other starting points will give other results
+  srand(time(0));
+  int startingVerticle = rand() % G.size;
 
   path.push_back(startingVerticle);
   G.visit(path.back());
