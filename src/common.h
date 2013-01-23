@@ -7,6 +7,7 @@
 #include<cstring>
 #include<ctime>
 #include<cstdlib>
+#include<unistd.h>
 
 #define INF 2000000000
 #define REP(i,n) for(int i = 0; i < (n); i++)
